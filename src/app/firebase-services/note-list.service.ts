@@ -59,6 +59,7 @@ export class NoteListService {
 
   async updateNote(note: Note) {
     this.noteslist = [];
+    this.markedNotesList = [];
     if (note) {
       let docRef = this.getSingleDocRef(this.getCallIdFromNode(note), note.id)
       await updateDoc(docRef, this.getCleanJson(note))
