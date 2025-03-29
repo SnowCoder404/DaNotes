@@ -49,13 +49,16 @@ export class NoteListService {
   }
 
   async deleteNote(collId: string, docId: string) {
+    this.noteslist = [];
+    this.trasheslist = [];
     await deleteDoc(this.getSingleDocRef(collId, docId))
     .catch((error) => {
       console.error("Error deleting document: ", error);
-  });
+    });
   }
 
   async updateNote(note: Note) {
+    this.noteslist = [];
     if (note) {
       let docRef = this.getSingleDocRef(this.getCallIdFromNode(note), note.id)
       await updateDoc(docRef, this.getCleanJson(note))
@@ -71,8 +74,7 @@ export class NoteListService {
       title: note.title,
       content: note.content,
       marked: note.marked
-    };
-    
+    }; 
   }
 
   getCallIdFromNode (note:Note) {
@@ -85,6 +87,7 @@ export class NoteListService {
 
   async addNote(type: "trash" | "note", item: Note) {
     if (type === "trash") {
+      this.trasheslist = [];
       item.type = "trash";
       await addDoc(this.getTrashRef(), item)
       .then((docRef) => {{
@@ -93,6 +96,7 @@ export class NoteListService {
         console.error("Error adding document: ", error);
       });
     } else {
+      this.noteslist = [];
       item.type = "note";
       await addDoc(this.getNotesRef(), item)
       .then((docRef) => {{
