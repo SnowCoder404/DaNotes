@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, onSnapshot, addDoc, updateDoc, deleteDoc, orderBy, limit, query, where } from '@angular/fire/firestore';
 import { Note } from '../interfaces/note.interface';
 import { single } from 'rxjs';
 
@@ -10,26 +10,42 @@ export class NoteListService {
 
   noteslist: Note[] = [];
   trasheslist: Note[] = []; 
-
+  markedNotesList: Note[] = [];
   firestore: Firestore = inject(Firestore);
   notelist;
   trashlist;
+  markedlist;
 
   constructor() { 
-    this.noteslist = [];
-    this.trasheslist = [];
-    
-    this.notelist = onSnapshot(this.getNotesRef(), (notes) => {
+    this.notelist = this.getNotes();
+    this.trashlist = this.getTrashNotes();
+    this.markedlist = this.getMarkedNotes();
+  }
+
+  getNotes() {
+    const q = query(this.getNotesRef(),where("marked", "==", false));
+    return onSnapshot(q, (notes) => {
       notes.forEach((note) => { 
           this.noteslist.push(this.setNoteObject(note.data(), note.id)); 
       });
-    } );
-    
-    this.trashlist = onSnapshot(this.getTrashRef(), (notes) => {
+    } );    
+  }
+
+  getTrashNotes() {
+    return onSnapshot(this.getTrashRef(), (notes) => {
       notes.forEach((trash) => { 
           this.trasheslist.push(this.setNoteObject(trash.data(), trash.id)); 
       });
-    } );
+    } );  
+  }
+
+  getMarkedNotes() {
+    const q = query(this.getNotesRef(),where("marked", "==", true));
+    return onSnapshot(q, (notes) => {
+      notes.forEach((note) => { 
+          this.markedNotesList.push(this.setNoteObject(note.data(), note.id)); 
+      });
+    } );  
   }
 
   async deleteNote(collId: string, docId: string) {
@@ -47,7 +63,6 @@ export class NoteListService {
         console.error("Error updating document: ", error);
       });
     }
-    
   }
   
   getCleanJson(note: Note): {} {
@@ -91,6 +106,7 @@ export class NoteListService {
   ngOnDestroy() {
     this.notelist();  
     this.trashlist();
+    this.markedlist();
   }
 
   getNotesRef() {

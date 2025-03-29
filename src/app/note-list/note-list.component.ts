@@ -23,9 +23,17 @@ export class NoteListComponent {
 
   }
 
-  showContent (note: string) {
-    return note === "trash" ? this.noteService.trasheslist : this.noteService.noteslist;
-  } 
+  showContent () {
+    if (this.status === "notes") {
+      if (this.favFilter == "fav") {
+        return this.noteService.markedNotesList;
+      } else {
+        return this.noteService.noteslist;
+      }
+    } else {
+      return this.noteService.trasheslist;
+    }
+  }
 
   changeFavFilter(filter:"all" | "fav"){
     this.favFilter = filter;

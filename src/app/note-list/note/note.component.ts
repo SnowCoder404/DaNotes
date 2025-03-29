@@ -16,7 +16,9 @@ export class NoteComponent {
   edit = false;
   hovered = false;
   
-  constructor(private noteService: NoteListService){}
+  constructor(private noteService: NoteListService){
+
+  }
 
   changeMarkedStatus(){
     this.note.marked = !this.note.marked;
@@ -45,7 +47,6 @@ export class NoteComponent {
       this.noteService.addNote("trash", this.note);
       this.noteService.deleteNote("notes", docId);
     }
-
   }
 
   moveToNotes(){

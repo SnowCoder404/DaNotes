@@ -134,12 +134,12 @@
     </div>
     <div>
         @if (status != 'trash') {
-            @for (note of showContent("notes"); track note) {
+            @for (note of showContent(); track note) {
                 <app-note [note]="note"></app-note>
             }
         }
         @else {
-            @for (note of showContent("trash"); track note) {
+            @for (note of showContent(); track note) {
                 <app-note [note]="note"></app-note>
             }
         }
