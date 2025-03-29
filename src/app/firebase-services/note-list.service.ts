@@ -50,6 +50,7 @@ export class NoteListService {
 
   async deleteNote(collId: string, docId: string) {
     this.noteslist = [];
+    this.markedNotesList = [];
     this.trasheslist = [];
     await deleteDoc(this.getSingleDocRef(collId, docId))
     .catch((error) => {
